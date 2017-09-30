@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="js/jquery-3.2.1.min.js"></script>
+
+        <script type="text/javascript">
+
+
+            $(document).ready(function () {
+                $("#save").click(putProducto);
+                $("#lst").click(getProducto);
+            });
+
+
+            function putProducto() {
+
+                producto = JSON.stringify({presentacion: $("#presentacion").val(),
+                    cantidad: $("#cantidad").val(),
+                    precio: $("#precio").val(),
+                    descripcion: $("#descripcion").val()});
+
+                $.ajax({
+                    url: 'http://localhost:8080/simple_ws/producto',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: producto,
+                    method: 'PUT',
+                    success: function (data, textStatus, jqXHR) {
+                        alert(data.description);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+
+            function getProducto() {
+
+                $.ajax({
+                    url: 'http://localhost:8080/simple_ws/producto',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    method: 'GET',
+                    success: function (productos, textStatus, jqXHR) {
+
+                        table = $('<table></table>').attr("border", "1");
+
+                        for (i = 0; i < productos.length; i++) {
+                            producto = productos[i];
+                            row = $('<tr></tr>');
+                            cellPresentacion = $('<td></td>').html(producto.presentacion);
+                            cellCantidad = $('<td></td>').html(producto.cantidad);
+                            cellPrecio = $('<td></td>').html(producto.precio);
+                            cellDescripcion = $('<td></td>').html(producto.descripcion);
+
+                            row.append(cellPresentacion);
+                            row.append(cellCantidad);
+                            row.append(cellPrecio);
+                            row.append(cellDescripcion);
+
+                            table.append(row);
+                        }
+                        $("#resp").append(table);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+        </script>
+
+
+    </head>
+    <body>
+
+        presentacion:  <input type="text" id="presentacion"/> <br>
+        cantidad:  <input type="text" id="cantidad"/> <br>
+        precio:  <input type="text" id="precio"/> <br>
+        descripcion:  <input type="text" id="descripcion"/> <br>
+
+        <input type="button" value="Guardar" id="save"/>
+
+        <input type="button" value="Listar" id="lst"/>
+
+        <div id="resp"> 
+
+
+        </div>
+
+    </body>
+</html>
